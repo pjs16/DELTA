@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Delta · Assistência Profissional Automatizada</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   MAQUETE — Delta Assistência Profissional Automatizada
+   Editar aqui os dados da empresa e os números de WhatsApp
+   ============================================================ */
+:root{
+  --panel-0:#0E1216;
+  --panel-1:#161C22;
+  --panel-2:#1E262E;
+  --line:#2C3843;
+  --lp:#34C6E8;
+  --hp:#E2453C;
+  --oil:#F2A33C;
+  --ok:#4FD08A;
+  --bone:#EAEFF3;
+  --muted:#8CA0AF;
+  --r:14px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(120% 60% at 50% 0%, #1A232B 0%, var(--panel-0) 55%) fixed,
+    var(--panel-0);
+  color:var(--bone);
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  font-size:15px;line-height:1.5;
+  padding:0 0 96px;
+}
+.app{max-width:520px;margin:0 auto;padding:0 16px}
+
+/* ---------- marca ---------- */
+.brand{display:flex;align-items:center;gap:12px;padding:18px 0 14px}
+.mark{width:42px;height:42px;flex:0 0 42px}
+.mark img,.mark svg{display:block;width:100%;height:100%;object-fit:contain}
+.brand h1{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:19px;letter-spacing:.06em;text-transform:uppercase;margin:0;line-height:1.05
+}
+.brand h1 span{display:block;font-weight:500;font-size:12.5px;letter-spacing:.20em;color:var(--lp)}
+.brand .rev{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);text-align:right;letter-spacing:.04em}
+
+/* ---------- manômetro de progresso ---------- */
+.gauge{position:relative;background:var(--panel-1);border:1px solid var(--line);border-radius:var(--r);padding:10px 14px 8px;margin-bottom:16px}
+.gauge svg{display:block;width:100%;height:auto}
+.gauge .read{
+  position:absolute;left:0;right:0;bottom:12px;text-align:center;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase
+}
+.gauge .read b{color:var(--bone);font-weight:600}
+#needle{transition:transform .5s cubic-bezier(.4,1.4,.5,1);transform-origin:100px 78px}
+
+/* ---------- telas ---------- */
+.screen{display:none;animation:in .28s ease both}
+.screen.active{display:block}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--lp);margin:0 0 6px}
+h2{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:27px;letter-spacing:.01em;margin:0 0 6px;line-height:1.1}
+.sub{color:var(--muted);font-size:14px;margin:0 0 18px}
+
+.card{background:var(--panel-1);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.card.warn{border-color:rgba(242,163,60,.45);background:linear-gradient(180deg,rgba(242,163,60,.08),transparent 60%),var(--panel-1)}
+
+label{display:block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+label .req{color:var(--hp)}
+input[type=text],input[type=email],input[type=tel],input[type=number],select,textarea{
+  width:100%;background:var(--panel-0);border:1px solid var(--line);color:var(--bone);
+  border-radius:10px;padding:12px 13px;font-family:'Inter',sans-serif;font-size:15px;outline:none
+}
+textarea{min-height:110px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--lp);box-shadow:0 0 0 3px rgba(52,198,232,.15)}
+.field{margin-bottom:13px}
+.field .err{display:none;color:var(--hp);font-size:12.5px;margin-top:5px}
+.field.bad input,.field.bad select{border-color:var(--hp)}
+.field.bad .err{display:block}
+.row{display:flex;gap:10px}
+.row>*{flex:1}
+
+/* ---------- botões ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;
+  border:0;border-radius:11px;padding:15px 18px;cursor:pointer;
+  font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:17px;letter-spacing:.08em;text-transform:uppercase;
+  background:var(--lp);color:#06202A;transition:filter .15s
+}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--bone)}
+.btn.wa{background:#25D366;color:#06230F;text-decoration:none}
+.nav{display:flex;gap:10px;margin-top:16px}
+.nav .btn.ghost{flex:0 0 34%}
+
+/* ---------- sim / não ---------- */
+.yn{display:flex;gap:10px;margin-top:12px}
+.yn button{
+  flex:1;padding:14px;border-radius:11px;border:1px solid var(--line);background:var(--panel-0);
+  color:var(--bone);font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:17px;
+  letter-spacing:.08em;text-transform:uppercase;cursor:pointer
+}
+.yn button[data-v=sim].on{border-color:var(--ok);background:rgba(79,208,138,.14);color:var(--ok)}
+.yn button[data-v=nao].on{border-color:var(--hp);background:rgba(226,69,60,.14);color:var(--hp)}
+
+/* ---------- fases ---------- */
+.phase{margin-bottom:12px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel-1);overflow:hidden}
+.phase.done{border-color:rgba(79,208,138,.4)}
+.phase.flagged{border-color:rgba(226,69,60,.45)}
+.phase-h{display:flex;align-items:flex-start;gap:12px;padding:15px 16px}
+.pnum{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:var(--panel-0);
+  background:var(--muted);border-radius:6px;padding:3px 6px;flex:0 0 auto;letter-spacing:.05em
+}
+.phase.done .pnum{background:var(--ok)}
+.phase.flagged .pnum{background:var(--hp);color:#fff}
+.phase-h h3{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:19px;margin:0 0 3px;letter-spacing:.02em}
+.phase-h p{margin:0;font-size:14px;color:var(--muted)}
+.phase-b{padding:0 16px 16px}
+.hint{font-size:13px;color:var(--muted);margin:10px 0 0;padding-left:12px;border-left:2px solid var(--line)}
+
+.fix{margin-top:14px;padding:14px;border-radius:11px;background:rgba(226,69,60,.07);border:1px solid rgba(226,69,60,.28)}
+.fix h4{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--hp);margin:0 0 10px}
+.fix ol{margin:0;padding-left:20px}
+.fix li{margin-bottom:9px;font-size:14.2px}
+.fix li b{color:var(--bone)}
+
+/* ---------- guias visuais ---------- */
+.guide{margin:12px 0 2px;background:var(--panel-0);border:1px dashed var(--line);border-radius:11px;padding:12px}
+.guide svg{display:block;width:100%;height:auto}
+.guide figcaption{font-size:12.5px;color:var(--muted);margin-top:9px;text-align:center}
+
+/* ---------- captura de evidências ---------- */
+.drop{
+  display:block;border:1px dashed var(--line);border-radius:11px;padding:18px;text-align:center;cursor:pointer;
+  background:var(--panel-0);transition:border-color .15s
+}
+.drop:hover{border-color:var(--lp)}
+.drop .ic{font-size:22px;display:block;margin-bottom:6px}
+.drop .t{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:16px;letter-spacing:.05em;text-transform:uppercase}
+.drop .s{font-size:12.5px;color:var(--muted);margin-top:3px}
+.drop.filled{border-style:solid;border-color:var(--ok)}
+.drop.filled .t{color:var(--ok)}
+input[type=file]{display:none}
+.thumb{margin-top:10px;border-radius:10px;overflow:hidden;border:1px solid var(--line)}
+.thumb img,.thumb video{display:block;width:100%}
+.tabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.tabs button{
+  border:1px solid var(--line);background:var(--panel-0);color:var(--muted);border-radius:9px;padding:9px 12px;cursor:pointer;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;text-transform:uppercase
+}
+.tabs button.on{border-color:var(--lp);color:var(--lp);background:rgba(52,198,232,.1)}
+.pane{display:none}.pane.on{display:block}
+.rec{display:flex;align-items:center;gap:14px}
+.rec .dot{width:52px;height:52px;border-radius:50%;background:var(--hp);border:0;cursor:pointer;flex:0 0 52px}
+.rec.on .dot{border-radius:14px;animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.55}}
+.rec .t{font-family:'IBM Plex Mono',monospace;font-size:22px;letter-spacing:.05em}
+.rec .t small{display:block;font-size:11px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}
+
+/* ---------- relatório ---------- */
+.ticket{background:var(--panel-1);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:14px}
+.ticket-h{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+.ticket-h .id{font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:600;letter-spacing:.06em}
+.pri{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;padding:5px 9px;border-radius:6px}
+.pri.alta{background:rgba(226,69,60,.16);color:var(--hp)}
+.pri.media{background:rgba(242,163,60,.16);color:var(--oil)}
+.pri.baixa{background:rgba(79,208,138,.16);color:var(--ok)}
+.kv{display:flex;padding:9px 16px;border-bottom:1px solid rgba(44,56,67,.5);font-size:14px;gap:12px}
+.kv:last-child{border-bottom:0}
+.kv .k{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);flex:0 0 38%;padding-top:3px}
+.kv .v{flex:1;word-break:break-word}
+.kv .v.bad{color:var(--hp)}
+.kv .v.good{color:var(--ok)}
+pre.report{
+  background:var(--panel-0);border:1px solid var(--line);border-radius:11px;padding:13px;
+  font-family:'IBM Plex Mono',monospace;font-size:11.5px;line-height:1.55;white-space:pre-wrap;color:var(--muted);max-height:240px;overflow:auto
+}
+.note{font-size:12.5px;color:var(--muted);margin-top:10px}
+.legal{font-size:11.5px;color:#5F717E;margin:22px 0 0;text-align:center;line-height:1.6}
+.toast{
+  position:fixed;left:50%;bottom:22px;transform:translate(-50%,120%);background:var(--ok);color:#06230F;
+  padding:12px 18px;border-radius:11px;font-weight:600;font-size:14px;transition:transform .3s;z-index:9
+}
+.toast.on{transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="brand">
+    <div class="mark" id="logoSlot"></div>
+    <h1>Delta Assistência<span>Profissional Automatizada</span></h1>
+    <div class="rev">MAQUETE<br>v0.1</div>
+  </header>
+
+  <div class="gauge">
+    <svg viewBox="0 0 200 96" aria-hidden="true">
+      <path d="M14 78 A86 86 0 0 1 186 78" fill="none" stroke="#2C3843" stroke-width="9" stroke-linecap="round"/>
+      <path id="arc" d="M14 78 A86 86 0 0 1 186 78" fill="none" stroke="#34C6E8" stroke-width="9" stroke-linecap="round"
+            stroke-dasharray="270" stroke-dashoffset="270"/>
+      <g stroke="#5F717E" stroke-width="1.5">
+        <line x1="14" y1="78" x2="24" y2="78"/><line x1="30" y1="42" x2="38" y2="48"/>
+        <line x1="100" y1="20" x2="100" y2="30"/><line x1="170" y1="42" x2="162" y2="48"/>
+        <line x1="186" y1="78" x2="176" y2="78"/>
+      </g>
+      <g id="needle"><line x1="100" y1="78" x2="100" y2="30" stroke="#EAEFF3" stroke-width="2.5" stroke-linecap="round"/></g>
+      <circle cx="100" cy="78" r="6" fill="#161C22" stroke="#5F717E" stroke-width="1.5"/>
+    </svg>
+    <div class="read" id="gaugeRead">Passo <b>0</b> de 5 · não iniciado</div>
+  </div>
+
+  <!-- ================= 0 · INÍCIO ================= -->
+  <section class="screen active" id="s-inicio">
+    <p class="eyebrow">Suporte técnico · Máquinas de A/C</p>
+    <h2>Diagnóstico guiado em 5 passos</h2>
+    <p class="sub">Antes de ligar, responda este formulário. A maioria das falhas se resolve aqui mesmo; se não resolver, o chamado chega ao técnico já com número de série, evidências e testes feitos.</p>
+    <div class="card">
+      <div class="kv"><div class="k">1 · Contato</div><div class="v">Empresa, responsável, e-mail e WhatsApp — obrigatório</div></div>
+      <div class="kv"><div class="k">2 · Série</div><div class="v">Foto da plaqueta no painel traseiro da máquina</div></div>
+      <div class="kv"><div class="k">3 · Relato</div><div class="v">Áudio ou vídeo de até 60 s, foto ou texto</div></div>
+      <div class="kv"><div class="k">4 · Testes</div><div class="v">Checklist por fase com solução em cada etapa</div></div>
+      <div class="kv"><div class="k">5 · Envio</div><div class="v">Relatório pronto para mandar ao suporte no WhatsApp</div></div>
+    </div>
+    <button class="btn" onclick="go('s-contato')">Começar diagnóstico</button>
+    <p class="legal">Delta · revendedora autorizada ISC<br>Atendimento de segunda a sexta, 8h às 18h</p>
+  </section>
+
+  <!-- ================= 1 · CONTATO ================= -->
+  <section class="screen" id="s-contato">
+    <p class="eyebrow">Passo 1 de 5</p>
+    <h2>Dados de contato</h2>
+    <p class="sub">Sem estes dados o chamado não é aberto: são os que o técnico usa para devolver a resposta.</p>
+    <div class="card">
+      <div class="field" id="f-empresa"><label>Empresa / oficina <span class="req">*</span></label>
+        <input type="text" id="empresa" placeholder="Ex.: Auto Clima Ltda."><div class="err">Preencha o nome da empresa.</div></div>
+      <div class="field" id="f-nome"><label>Responsável <span class="req">*</span></label>
+        <input type="text" id="nome" placeholder="Nome e sobrenome"><div class="err">Preencha nome e sobrenome.</div></div>
+      <div class="field" id="f-email"><label>E-mail <span class="req">*</span></label>
+        <input type="email" id="email" placeholder="tecnico@empresa.com.br" inputmode="email"><div class="err">Confira o e-mail: falta o @ ou o domínio.</div></div>
+      <div class="field" id="f-tel"><label>WhatsApp para retorno <span class="req">*</span></label>
+        <input type="tel" id="tel" placeholder="(11) 9xxxx-xxxx" inputmode="tel"><div class="err">Informe o número com DDD.</div></div>
+      <div class="row">
+        <div class="field" id="f-cidade"><label>Cidade / UF <span class="req">*</span></label>
+          <input type="text" id="cidade" placeholder="São Paulo / SP"><div class="err">Informe cidade e estado.</div></div>
+        <div class="field" id="f-modelo"><label>Modelo <span class="req">*</span></label>
+          <select id="modelo">
+            <option value="">Escolher…</option>
+            <option>TX1-AC e Pro By Delta</option>
+            <option>ISC — R-134a</option>
+            <option>ISC — R-1234yf</option>
+            <option>Outro / não sei</option>
+          </select><div class="err">Escolha o modelo.</div></div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="btn ghost" onclick="go('s-inicio')">Voltar</button>
+      <button class="btn" onclick="valContato()">Continuar</button>
+    </div>
+  </section>
+
+  <!-- ================= 2 · SÉRIE ================= -->
+  <section class="screen" id="s-serie">
+    <p class="eyebrow">Passo 2 de 5</p>
+    <h2>Foto do número de série</h2>
+    <p class="sub">Fica na plaqueta de identificação, no painel traseiro, no canto superior direito, ao lado da entrada de energia.</p>
+
+    <figure class="guide">
+      <svg viewBox="0 0 320 210" aria-label="Localização da plaqueta de série">
+        <rect x="34" y="14" width="252" height="176" rx="8" fill="#161C22" stroke="#2C3843" stroke-width="2"/>
+        <rect x="46" y="26" width="228" height="60" rx="5" fill="#0E1216" stroke="#2C3843"/>
+        <text x="60" y="52" fill="#5F717E" font-family="IBM Plex Mono, monospace" font-size="10">PAINEL TRASEIRO</text>
+        <text x="60" y="70" fill="#5F717E" font-family="IBM Plex Mono, monospace" font-size="10">GRADE DE VENTILAÇÃO</text>
+        <g stroke="#2C3843"><line x1="46" y1="100" x2="274" y2="100"/></g>
+        <rect x="180" y="112" width="88" height="44" rx="4" fill="#0E1216" stroke="#E2453C" stroke-width="2.5"/>
+        <text x="188" y="128" fill="#EAEFF3" font-family="IBM Plex Mono, monospace" font-size="9">MODEL TX1-AC</text>
+        <text x="188" y="141" fill="#34C6E8" font-family="IBM Plex Mono, monospace" font-size="9">S/N 000000000</text>
+        <text x="188" y="152" fill="#5F717E" font-family="IBM Plex Mono, monospace" font-size="8">220V 50/60Hz</text>
+        <rect x="52" y="118" width="34" height="32" rx="4" fill="#0E1216" stroke="#2C3843"/>
+        <text x="55" y="164" fill="#5F717E" font-family="IBM Plex Mono, monospace" font-size="8">ENTRADA 220V</text>
+        <path d="M300 100 L276 128" stroke="#E2453C" stroke-width="2" marker-end="url(#ar)"/>
+        <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+          <path d="M0 0 L8 4 L0 8Z" fill="#E2453C"/></marker></defs>
+        <text x="228" y="94" fill="#E2453C" font-family="Barlow Condensed, sans-serif" font-size="13" letter-spacing="1">TIRE A FOTO AQUI</text>
+      </svg>
+      <figcaption>Substituir este desenho pela foto real da máquina.</figcaption>
+    </figure>
+
+    <label for="fSerie" class="drop" id="dSerie">
+      <span class="ic">▣</span>
+      <span class="t">Anexar foto da plaqueta</span>
+      <span class="s">O número precisa aparecer inteiro, sem reflexo</span>
+    </label>
+    <input type="file" id="fSerie" accept="image/*" capture="environment">
+    <div class="thumb" id="tSerie" hidden></div>
+
+    <div class="card" style="margin-top:12px">
+      <div class="field" id="f-serie"><label>Número de série digitado <span class="req">*</span></label>
+        <input type="text" id="serie" placeholder="Ex.: TX1AC-24-00318" style="text-transform:uppercase">
+        <div class="err">Digite o número de série como está na plaqueta.</div></div>
+      <div class="field"><label>Horas de uso no display (se aparecer)</label>
+        <input type="text" id="horas" placeholder="Ex.: 1.240 h" inputmode="numeric"></div>
+    </div>
+
+    <div class="nav">
+      <button class="btn ghost" onclick="go('s-contato')">Voltar</button>
+      <button class="btn" onclick="valSerie()">Continuar</button>
+    </div>
+  </section>
+
+  <!-- ================= 3 · RELATO ================= -->
+  <section class="screen" id="s-relato">
+    <p class="eyebrow">Passo 3 de 5</p>
+    <h2>Conte o que está acontecendo</h2>
+    <p class="sub">Escolha o jeito mais rápido para você. Áudio e vídeo: 60 segundos no máximo.</p>
+
+    <div class="tabs" id="relatoTabs">
+      <button class="on" data-p="p-audio">Áudio</button>
+      <button data-p="p-texto">Escrever</button>
+      <button data-p="p-foto">Foto</button>
+      <button data-p="p-video">Vídeo</button>
+    </div>
+
+    <div class="card">
+      <div class="pane on" id="p-audio">
+        <div class="rec" id="recBox">
+          <button class="dot" id="recBtn" aria-label="Gravar"></button>
+          <div class="t"><span id="recTime">0:00</span><small id="recState">Toque para gravar · máx 60 s</small></div>
+        </div>
+        <audio id="recPlay" controls style="width:100%;margin-top:12px" hidden></audio>
+        <p class="note">O microfone não abriu? Envie um áudio já gravado no WhatsApp:</p>
+        <label for="fAudio" class="drop" id="dAudio"><span class="t">Anexar áudio</span><span class="s">mp3, m4a, ogg · até 60 s</span></label>
+        <input type="file" id="fAudio" accept="audio/*">
+      </div>
+
+      <div class="pane" id="p-texto">
+        <div class="field"><label>O que a máquina faz e o que não faz</label>
+          <textarea id="texto" placeholder="Ex.: no ciclo automático chega no vácuo, mas na carga trava em 0,3 kg e o ventilador continua ligado. Ontem vazou óleo embaixo do engate azul."></textarea></div>
+        <div class="field"><label>Quais testes você já fez?</label>
+          <textarea id="testes" style="min-height:80px" placeholder="Ex.: troquei as mangueiras, conferi a tomada, fiz vácuo com os engates tampados."></textarea></div>
+      </div>
+
+      <div class="pane" id="p-foto">
+        <label for="fFoto" class="drop" id="dFoto"><span class="ic">▣</span><span class="t">Anexar foto</span>
+          <span class="s">Display com o erro, manchas de óleo, conexões</span></label>
+        <input type="file" id="fFoto" accept="image/*" capture="environment">
+        <div class="thumb" id="tFoto" hidden></div>
+      </div>
+
+      <div class="pane" id="p-video">
+        <label for="fVideo" class="drop" id="dVideo"><span class="ic">▶</span><span class="t">Anexar vídeo</span>
+          <span class="s">Até 60 s · mostre o display e o barulho da máquina</span></label>
+        <input type="file" id="fVideo" accept="video/*" capture="environment">
+        <div class="thumb" id="tVideo" hidden></div>
+      </div>
+    </div>
+
+    <div class="card warn">
+      <label style="margin-bottom:10px">Antes de seguir</label>
+      <p style="margin:0;font-size:14px">Se você já sabe em qual fase a máquina trava (recolhimento, vácuo, carga), o checklist do passo 4 leva direto a essa fase. Se não sabe, responda tudo: são 7 perguntas de sim ou não.</p>
+    </div>
+
+    <div class="nav">
+      <button class="btn ghost" onclick="go('s-serie')">Voltar</button>
+      <button class="btn" onclick="valRelato()">Continuar</button>
+    </div>
+  </section>
+
+  <!-- ================= 4 · CHECKLIST ================= -->
+  <section class="screen" id="s-check">
+    <p class="eyebrow">Passo 4 de 5</p>
+    <h2>Checklist por fase</h2>
+    <p class="sub">Responda na ordem. Quando marcar <b>Não</b>, abre a solução para testar na hora.</p>
+    <div id="phases"></div>
+    <div class="nav">
+      <button class="btn ghost" onclick="go('s-relato')">Voltar</button>
+      <button class="btn" onclick="valCheck()">Gerar relatório</button>
+    </div>
+  </section>
+
+  <!-- ================= 5 · RELATÓRIO ================= -->
+  <section class="screen" id="s-relatorio">
+    <p class="eyebrow">Passo 5 de 5</p>
+    <h2>Relatório pronto</h2>
+    <p class="sub">Envie o relatório para um dos dois números do suporte. As evidências vão anexadas na mesma conversa.</p>
+
+    <div class="ticket" id="ticket"></div>
+
+    <div class="card" id="cardReg">
+      <label>Registrar o chamado</label>
+      <p style="margin:0 0 12px;font-size:14px">Salva o chamado com as fotos, o áudio e o checklist, e avisa a assistência por e-mail. Você recebe uma cópia no seu e-mail.</p>
+      <button class="btn" id="btnReg" onclick="registrar()">Registrar e avisar a Delta</button>
+      <p class="note" id="regState"></p>
+    </div>
+
+    <label>Texto que será enviado</label>
+    <pre class="report" id="report"></pre>
+
+    <div style="margin-top:14px;display:flex;flex-direction:column;gap:10px">
+      <a class="btn wa" id="wa1" target="_blank" rel="noopener">Enviar ao suporte · linha 1</a>
+      <a class="btn wa" id="wa2" target="_blank" rel="noopener">Enviar ao suporte · linha 2</a>
+      <button class="btn ghost" onclick="copiar()">Copiar relatório</button>
+      <button class="btn ghost" onclick="location.reload()">Abrir outro chamado</button>
+    </div>
+    <p class="legal" id="pieContato"></p>
+  </section>
+
+</div>
+<div class="toast" id="toast">Relatório copiado</div>
+
+<script>
+/* ===================== CONFIGURAÇÃO ===================== */
+const CFG = {
+  empresa:'Delta Ferramentas · Assistência Técnica',
+  email:'assistencia@deltaferramentas.com.br',   // <-- substituir
+  horario:'Segunda a sexta, 8h às 18h',
+  wa1:'55119100064072',   // <-- conferir dígitos
+  wa2:'55996419741',      // <-- conferir dígitos
+
+  // Logo Delta: cole aqui o link da imagem (PNG/SVG) ou o data:image/png;base64,...
+  // Enquanto estiver vazio, aparece a marca provisória.
+  logo:'',
+
+  // Endpoint do Google Apps Script (arquivo delta-backend.gs).
+  // Vazio = o chamado não fica salvo, só vai pelo WhatsApp.
+  endpoint:''
+};
+
+/* ===================== FASES ===================== */
+const PHASES = [
+ {id:'f1', n:'F1', t:'Energia', q:'A máquina liga e o display acende?',
+  hint:'Display iluminado e ventilador interno girando.',
+  fix:['Meça a tomada com o multímetro: chave em <b>V~ (VAC)</b>, escala 250 V ou automática, pontas nos dois furos. Tem que dar entre <b>220 e 236 V</b>.',
+       'Menos de 200 V ou leitura instável: o problema é a rede da oficina. Não ligue em extensão compartilhada com máquina de solda ou compressor.',
+       'Se a tensão estiver correta: confira o <b>disjuntor</b> do quadro e o <b>fusível do painel traseiro</b>.',
+       'Verifique se o cabo de força está encaixado até o fim e se a <b>chave geral</b> do painel está em I.'],
+  guide:'tester'},
+
+ {id:'f2', n:'F2', t:'Recolhimento', q:'A máquina recolhe o gás do veículo? (a pressão cai e o peso do botijão sobe)',
+  hint:'Confirmação: baixa pressão em 0 bar ou menos, por 30 segundos.',
+  fix:['Ouça se o <b>compressor interno dá partida</b>. Se não parte, é alimentação do compressor ou o pressostato de alta cortando em 25 bar.',
+       'Engates rápidos: os dois precisam estar <b>abertos</b> (manopla girada até o fim) e encaixados nas válvulas de serviço.',
+       'Anote <b>quantos quilos o botijão marca no display</b>. Acima de 12 kg a máquina bloqueia o recolhimento: transfira o gás para um cilindro de recuperação.',
+       'Se o botijão ficou com <b>pressão alta</b> por gases não condensáveis, faça a purga de NCG antes de continuar.',
+       'Válvula solenoide de recolhimento: ao iniciar o ciclo tem que dar um <b>clique</b>. Sem clique, verifique bobina e conector.',
+       'Filtro secador saturado (veja o contador de horas do filtro): recolhimento lento ou que nunca termina.'],
+  ask:{kg:'Quilos do botijão no display', bar:'Pressão do botijão (bar)'}},
+
+ {id:'f3', n:'F3', t:'Vácuo', q:'Chega a −0,95 bar em 10 minutos ou menos?',
+  hint:'A bomba de vácuo tem que soar parelha, sem batidas.',
+  fix:['Óleo da bomba de vácuo: se estiver <b>turvo, leitoso ou abaixo do nível</b>, troque. É a causa nº 1 de vácuo que não desce.',
+       'Teste a máquina sozinha: <b>tampe os dois engates</b> e repita o vácuo. Se assim ela chega, o vazamento está no veículo ou nas mangueiras.',
+       'Confira os anéis de vedação dos engates rápidos e as uniões flare das mangueiras.',
+       'Verifique se a válvula de vácuo do painel abre (clique da solenoide).'],
+  ask:{vac:'Vácuo alcançado (bar)'}},
+
+ {id:'f4', n:'F4', t:'Teste de vazamento', q:'Segura o vácuo? (sobe menos de 50 mbar em 5 minutos)',
+  hint:'A própria máquina mede isso no fim do vácuo.',
+  fix:['Repita o teste com os engates tampados para separar <b>máquina</b> de <b>veículo</b>.',
+       'No veículo: válvulas Schrader de serviço, condensador e uniões do evaporador.',
+       'Na máquina: tampa do frasco de óleo mal fechada quebra o vácuo — é o erro mais comum.',
+       'Mangueiras velhas ou dobradas vazam por dentro; troque uma de cada vez para isolar.']},
+
+ {id:'f5', n:'F5', t:'Óleo', q:'Injeta o óleo novo e drena o usado?',
+  hint:'Se sobra ou falta óleo a cada ciclo, o problema está aqui.',
+  fix:['Nível do frasco de <b>óleo novo</b>: precisa ter produto e a tampa fechada até o fim.',
+       'Frasco de <b>óleo usado</b>: esvazie, cheio ele bloqueia a drenagem.',
+       'Mangueira de óleo dobrada, furada ou com ar: purgue levantando o frasco.',
+       'A célula de carga do óleo tem que marcar <b>0</b> com o frasco pendurado e parado. Se oscila, a mangueira está esticada ou o frasco encosta no chassi.',
+       'Não misture <b>PAG</b> com <b>POE</b>: a máquina bloqueia e é preciso fazer limpeza do circuito.']},
+
+ {id:'f6', n:'F6', t:'Carga', q:'Carrega os quilos programados e fecha o ciclo?',
+  hint:'A carga é em fase líquida, com o botijão na posição de trabalho.',
+  fix:['Gás disponível: o botijão precisa de <b>pelo menos 2 kg úteis</b> acima da reserva. Com menos que isso, a carga é interrompida.',
+       'Botijão frio (menos de 18 °C) ou oficina fria: a pressão não é suficiente. Deixe estabilizar ou use o aquecedor do botijão.',
+       'Balança travada: mangueira esticada, plataforma encostando em algo ou máquina em piso desnivelado. Aparece como carga que não avança.',
+       'Válvula de carga e engate de alta abertos; motor e A/C do veículo desligados durante a carga.',
+       'No fim, espere a descarga das mangueiras antes de desconectar; caso contrário você perde gás a cada ciclo.'],
+  ask:{kgc:'Quilos programados x carregados'}},
+
+ {id:'f7', n:'F7', t:'Perda de gás ou óleo', q:'Você vê perda de peso com a máquina parada ou manchas de óleo nela?',
+  hint:'Esta é a falha que quase nunca aparece a olho nu.',
+  fix:['Anote o <b>peso do botijão hoje</b>, desligue a máquina e confira de novo em 24 h. Se baixou, há vazamento interno.',
+       'Pontos mais comuns: <b>anéis de vedação dos engates rápidos</b>, uniões flare das mangueiras e selo do compressor.',
+       'Passe detector eletrônico ou água com detergente nas uniões e veja se borbulha.',
+       'Não confunda: uma película de óleo no engate é normal depois de desconectar. Mancha que volta todo dia, não.',
+       'Com vazamento confirmado: feche a válvula do botijão e não opere a máquina até a visita técnica.'],
+  invert:true}
+];
+
+/* ===================== ESTADO ===================== */
+const S = {contato:{}, serie:{}, relato:{}, fases:{}, arq:[], files:[], grandes:[]};
+let passo = 0;
+
+/* ---------- logo ---------- */
+const LOGO_FALLBACK = `<svg viewBox="0 0 48 48" aria-label="Delta">
+  <path d="M24 4 46 44H2Z" fill="none" stroke="#34C6E8" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M24 17 34 36H14Z" fill="#E2453C"/></svg>`;
+document.getElementById('logoSlot').innerHTML =
+  CFG.logo ? '<img src="'+CFG.logo+'" alt="Delta">' : LOGO_FALLBACK;
+
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const map={'s-inicio':0,'s-contato':1,'s-serie':2,'s-relato':3,'s-check':4,'s-relatorio':5};
+  passo = map[id]; pintarGauge();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function pintarGauge(){
+  const p = passo/5;
+  document.getElementById('arc').style.strokeDashoffset = 270 - (270*p*0.98);
+  document.getElementById('needle').style.transform = 'rotate('+(-90 + 180*p)+'deg)';
+  const et=['não iniciado','contato','série','relato','testes','relatório pronto'][passo];
+  document.getElementById('gaugeRead').innerHTML='Passo <b>'+passo+'</b> de 5 · '+et;
+}
+
+/* ===================== PASSO 1 ===================== */
+function marcar(id, ok){ document.getElementById(id).classList.toggle('bad', !ok); return ok; }
+function valContato(){
+  const v = id => document.getElementById(id).value.trim();
+  let ok = true;
+  ok = marcar('f-empresa', v('empresa').length>1) && ok;
+  ok = marcar('f-nome', v('nome').length>2) && ok;
+  ok = marcar('f-email', /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(v('email'))) && ok;
+  ok = marcar('f-tel', v('tel').replace(/\D/g,'').length>=10) && ok;
+  ok = marcar('f-cidade', v('cidade').length>1) && ok;
+  ok = marcar('f-modelo', v('modelo')!=='') && ok;
+  if(!ok) return;
+  S.contato = {empresa:v('empresa'), nome:v('nome'), email:v('email'), tel:v('tel'), cidade:v('cidade'), modelo:v('modelo')};
+  go('s-serie');
+}
+
+/* ===================== PASSO 2 ===================== */
+function valSerie(){
+  const serie = document.getElementById('serie').value.trim();
+  if(!marcar('f-serie', serie.length>3)) return;
+  if(!S.serie.foto){ alert('Falta a foto da plaqueta de série. Ela é obrigatória para abrir o chamado.'); return; }
+  S.serie.numero = serie.toUpperCase();
+  S.serie.horas = document.getElementById('horas').value.trim();
+  go('s-relato');
+}
+
+/* ===================== ARQUIVOS ===================== */
+const LIMITE_UPLOAD = 12 * 1048576;   // 12 MB por arquivo
+const ROTULOS = {fSerie:'placa-serie', fFoto:'foto-problema', fVideo:'video-problema', fAudio:'audio-relato'};
+
+function comprimirImagem(file, max=1600, q=0.72){
+  return new Promise(res=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const e = Math.min(1, max/Math.max(img.width, img.height));
+      const c = document.createElement('canvas');
+      c.width = Math.round(img.width*e); c.height = Math.round(img.height*e);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      res(c.toDataURL('image/jpeg', q));
+    };
+    img.onerror = ()=>res(null);
+    img.src = URL.createObjectURL(file);
+  });
+}
+function lerBase64(file){
+  return new Promise(res=>{
+    const r = new FileReader();
+    r.onload = ()=>res(r.result); r.onerror = ()=>res(null);
+    r.readAsDataURL(file);
+  });
+}
+async function guardarArquivo(f, tipo, rotulo){
+  let d = null;
+  if(tipo==='foto') d = await comprimirImagem(f);
+  else if(f.size <= LIMITE_UPLOAD) d = await lerBase64(f);
+  if(d) S.files.push({rotulo:rotulo, nome:f.name, tipo:tipo, data:d});
+  else S.grandes.push(rotulo+' ('+(f.size/1048576).toFixed(0)+' MB — enviar pelo WhatsApp)');
+}
+
+function anexar(inputId, dropId, thumbId, tipo, maxSeg){
+  const inp = document.getElementById(inputId), drop = document.getElementById(dropId);
+  inp.addEventListener('change', ()=>{
+    const f = inp.files[0]; if(!f) return;
+    const url = URL.createObjectURL(f);
+    const fin = ()=>{
+      guardarArquivo(f, tipo, ROTULOS[inputId] || tipo);
+      drop.classList.add('filled');
+      drop.querySelector('.t').textContent = '✓ ' + f.name.slice(0,28);
+      drop.querySelector('.s').textContent = (f.size/1048576).toFixed(1)+' MB · toque para trocar';
+      if(thumbId){
+        const t = document.getElementById(thumbId); t.hidden=false;
+        t.innerHTML = tipo==='video' ? '<video src="'+url+'" controls playsinline></video>' : '<img src="'+url+'" alt="">';
+      }
+      if(inputId==='fSerie') S.serie.foto = f.name; else S.arq.push(tipo+': '+f.name);
+    };
+    if(maxSeg && (tipo==='audio'||tipo==='video')){
+      const el = document.createElement(tipo);
+      el.preload='metadata'; el.src=url;
+      el.onloadedmetadata = ()=>{
+        if(el.duration > maxSeg + 1){
+          alert('O arquivo tem '+Math.round(el.duration)+' s. O máximo é '+maxSeg+' s — corte e envie de novo.');
+          inp.value=''; return;
+        }
+        S.relato[tipo] = Math.round(el.duration)+' s'; fin();
+      };
+    } else fin();
+  });
+}
+anexar('fSerie','dSerie','tSerie','foto');
+anexar('fFoto','dFoto','tFoto','foto');
+anexar('fVideo','dVideo','tVideo','video',60);
+anexar('fAudio','dAudio',null,'audio',60);
+
+/* ===================== PASSO 3 ===================== */
+document.getElementById('relatoTabs').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  document.querySelectorAll('#relatoTabs button').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.pane').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); document.getElementById(b.dataset.p).classList.add('on');
+});
+
+let mr, chunks=[], tick, seg=0;
+document.getElementById('recBtn').addEventListener('click', async ()=>{
+  const box=document.getElementById('recBox'), st=document.getElementById('recState'), tm=document.getElementById('recTime');
+  if(mr && mr.state==='recording'){ mr.stop(); return; }
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    mr = new MediaRecorder(stream); chunks=[]; seg=0;
+    mr.ondataavailable = e=>chunks.push(e.data);
+    mr.onstop = ()=>{
+      clearInterval(tick); box.classList.remove('on'); stream.getTracks().forEach(t=>t.stop());
+      const blob = new Blob(chunks,{type:mr.mimeType});
+      const a=document.getElementById('recPlay'); a.hidden=false; a.src=URL.createObjectURL(blob);
+      st.textContent='Áudio gravado · '+seg+' s'; S.relato.audio = seg+' s (gravado)';
+      lerBase64(blob).then(d=>{ if(d) S.files.push({rotulo:'audio-gravado', nome:'audio.webm', tipo:'audio', data:d}); });
+    };
+    mr.start(); box.classList.add('on'); st.textContent='Gravando… toque para parar';
+    tick = setInterval(()=>{
+      seg++; tm.textContent='0:'+String(seg).padStart(2,'0');
+      if(seg>=60) mr.stop();
+    },1000);
+  }catch(err){
+    st.textContent='Microfone indisponível — use "Anexar áudio"';
+  }
+});
+
+function valRelato(){
+  S.relato.texto = document.getElementById('texto').value.trim();
+  S.relato.testes = document.getElementById('testes').value.trim();
+  const hay = S.relato.texto || S.relato.audio || S.relato.video || S.arq.length;
+  if(!hay){ alert('Conte o que está acontecendo: grave um áudio, escreva o problema ou anexe uma foto.'); return; }
+  go('s-check');
+}
+
+/* ===================== PASSO 4 ===================== */
+const SVG_TESTER = `<svg viewBox="0 0 300 180" aria-label="Multímetro em tensão alternada">
+  <rect x="70" y="10" width="160" height="160" rx="14" fill="#161C22" stroke="#2C3843" stroke-width="2"/>
+  <rect x="88" y="24" width="124" height="42" rx="5" fill="#0E1216" stroke="#2C3843"/>
+  <text x="150" y="55" text-anchor="middle" fill="#34C6E8" font-family="IBM Plex Mono, monospace" font-size="22" font-weight="600">220.6</text>
+  <text x="196" y="40" fill="#34C6E8" font-family="IBM Plex Mono, monospace" font-size="11">V~</text>
+  <circle cx="150" cy="112" r="34" fill="#0E1216" stroke="#2C3843" stroke-width="2"/>
+  <line x1="150" y1="112" x2="150" y2="84" stroke="#E2453C" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="150" cy="112" r="5" fill="#E2453C"/>
+  <text x="150" y="78" text-anchor="middle" fill="#E2453C" font-family="IBM Plex Mono, monospace" font-size="11">V~</text>
+  <text x="112" y="100" fill="#5F717E" font-family="IBM Plex Mono, monospace" font-size="9">V⎓</text>
+  <text x="182" y="100" fill="#5F717E" font-family="IBM Plex Mono, monospace" font-size="9">Ω</text>
+  <text x="150" y="160" text-anchor="middle" fill="#5F717E" font-family="IBM Plex Mono, monospace" font-size="9">COM · VΩ</text>
+  <circle cx="126" cy="166" r="5" fill="#0E1216" stroke="#2C3843"/><circle cx="174" cy="166" r="5" fill="#0E1216" stroke="#E2453C"/>
+</svg>`;
+
+function pintarFases(){
+  const cont = document.getElementById('phases');
+  cont.innerHTML = PHASES.map(p=>`
+    <div class="phase" id="ph-${p.id}">
+      <div class="phase-h">
+        <span class="pnum">${p.n}</span>
+        <div><h3>${p.t}</h3><p>${p.q}</p></div>
+      </div>
+      <div class="phase-b">
+        <div class="yn" data-f="${p.id}">
+          <button data-v="sim">Sim</button><button data-v="nao">Não</button>
+        </div>
+        <p class="hint">${p.hint}</p>
+        <div id="fix-${p.id}"></div>
+      </div>
+    </div>`).join('');
+
+  cont.addEventListener('click', e=>{
+    const b = e.target.closest('.yn[data-f] button'); if(!b) return;
+    const id = b.parentElement.dataset.f, val = b.dataset.v;
+    b.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    const p = PHASES.find(x=>x.id===id);
+    const ruim = p.invert ? val==='sim' : val==='nao';
+    S.fases[id] = {t:p.t, r:val, falha:ruim};
+    const card = document.getElementById('ph-'+id);
+    card.classList.toggle('flagged', ruim);
+    card.classList.toggle('done', !ruim);
+    const box = document.getElementById('fix-'+id);
+    box.innerHTML = ruim ? `
+      <div class="fix">
+        <h4>Teste isto antes de ligar</h4>
+        <ol>${p.fix.map(f=>'<li>'+f+'</li>').join('')}</ol>
+        ${p.guide==='tester' ? '<figure class="guide">'+SVG_TESTER+'<figcaption>Chave em V~ (tensão alternada). Leitura correta: 220 a 236 V.</figcaption></figure>' : ''}
+        ${p.ask ? Object.entries(p.ask).map(([k,l])=>`<div class="field" style="margin-top:10px"><label>${l}</label><input type="text" data-dado="${id}.${k}" placeholder="—"></div>`).join('') : ''}
+        <div class="yn" data-fix="${id}" style="margin-top:6px">
+          <button data-v="sim">Resolveu</button><button data-v="nao">Continua igual</button>
+        </div>
+      </div>` : '';
+  });
+
+  cont.addEventListener('click', e=>{
+    const b = e.target.closest('.yn[data-fix] button'); if(!b) return;
+    const id = b.parentElement.dataset.fix;
+    b.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    S.fases[id].resolvido = b.dataset.v==='sim';
+    const card = document.getElementById('ph-'+id);
+    card.classList.toggle('done', S.fases[id].resolvido);
+    card.classList.toggle('flagged', !S.fases[id].resolvido);
+  });
+
+  cont.addEventListener('input', e=>{
+    const d = e.target.dataset.dado; if(!d) return;
+    const [id,k] = d.split('.');
+    S.fases[id].dados = S.fases[id].dados || {};
+    S.fases[id].dados[k] = e.target.value;
+  });
+}
+pintarFases();
+
+function valCheck(){
+  const faltam = PHASES.filter(p=>!S.fases[p.id]);
+  if(faltam.length){
+    alert('Faltam '+faltam.length+' fases sem resposta: '+faltam.map(f=>f.n).join(', '));
+    document.getElementById('ph-'+faltam[0].id).scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  montarRelatorio(); go('s-relatorio');
+}
+
+/* ===================== PASSO 5 ===================== */
+let TXT='';
+function montarRelatorio(){
+  const falhas = PHASES.filter(p=>S.fases[p.id].falha && !S.fases[p.id].resolvido);
+  const resolvidas = PHASES.filter(p=>S.fases[p.id].falha && S.fases[p.id].resolvido);
+  const crit = falhas.some(p=>['f1','f7'].includes(p.id));
+  const pri = falhas.length===0 ? 'baixa' : (crit || falhas.length>2 ? 'alta' : 'media');
+  const priTxt = {baixa:'baixa', media:'média', alta:'alta'}[pri];
+  const id = 'DLT-' + new Date().toISOString().slice(2,10).replace(/-/g,'') + '-' +
+             Math.random().toString(36).slice(2,6).toUpperCase();
+  TICKET = id;
+
+  document.getElementById('ticket').innerHTML = `
+    <div class="ticket-h"><span class="id">${id}</span>
+      <span class="pri ${pri}">Prioridade ${priTxt}</span></div>
+    <div class="kv"><div class="k">Empresa</div><div class="v">${S.contato.empresa}</div></div>
+    <div class="kv"><div class="k">Responsável</div><div class="v">${S.contato.nome} · ${S.contato.tel}</div></div>
+    <div class="kv"><div class="k">E-mail</div><div class="v">${S.contato.email}</div></div>
+    <div class="kv"><div class="k">Cidade</div><div class="v">${S.contato.cidade}</div></div>
+    <div class="kv"><div class="k">Equipamento</div><div class="v">${S.contato.modelo} · série ${S.serie.numero}${S.serie.horas?' · '+S.serie.horas:''}</div></div>
+    <div class="kv"><div class="k">Falhas em aberto</div><div class="v ${falhas.length?'bad':'good'}">${falhas.length? falhas.map(f=>f.n+' '+f.t).join(', ') : 'Nenhuma — resolvido no checklist'}</div></div>
+    ${resolvidas.length?`<div class="kv"><div class="k">Resolvido no local</div><div class="v good">${resolvidas.map(f=>f.n+' '+f.t).join(', ')}</div></div>`:''}
+    <div class="kv"><div class="k">Evidências</div><div class="v">Série: ${S.serie.foto}${S.arq.length?' · '+S.arq.join(' · '):''}${S.relato.audio?' · áudio '+S.relato.audio:''}</div></div>`;
+
+  const L = [];
+  L.push('DELTA · ASSISTÊNCIA AUTOMATIZADA');
+  L.push('Chamado '+id+' · prioridade '+priTxt.toUpperCase());
+  L.push('—');
+  L.push('Empresa: '+S.contato.empresa);
+  L.push('Responsável: '+S.contato.nome);
+  L.push('WhatsApp: '+S.contato.tel+' · '+S.contato.email);
+  L.push('Cidade: '+S.contato.cidade);
+  L.push('Equipamento: '+S.contato.modelo+' · série '+S.serie.numero+(S.serie.horas?' · '+S.serie.horas:''));
+  L.push('—');
+  L.push('RELATO: '+(S.relato.texto||'(enviado em áudio/vídeo)'));
+  if(S.relato.testes) L.push('JÁ TESTOU: '+S.relato.testes);
+  L.push('—');
+  L.push('CHECKLIST:');
+  PHASES.forEach(p=>{
+    const f = S.fases[p.id];
+    let est = f.falha ? (f.resolvido ? 'RESOLVIDO NO LOCAL' : 'FALHA') : 'OK';
+    let d = f.dados ? ' ('+Object.entries(f.dados).filter(([,v])=>v).map(([k,v])=>k+'='+v).join(', ')+')' : '';
+    L.push('  '+p.n+' '+p.t+': '+est+d);
+  });
+  L.push('—');
+  L.push('Anexado nesta conversa: foto da série'+(S.arq.length?', '+S.arq.join(', '):'')+(S.relato.audio?', áudio '+S.relato.audio:''));
+  TXT = L.join('\n');
+  document.getElementById('report').textContent = TXT;
+
+  const enc = encodeURIComponent(TXT);
+  document.getElementById('wa1').href = 'https://wa.me/'+CFG.wa1+'?text='+enc;
+  document.getElementById('wa2').href = 'https://wa.me/'+CFG.wa2+'?text='+enc;
+  document.getElementById('pieContato').innerHTML =
+    CFG.empresa+'<br>'+CFG.email+'<br>'+CFG.horario;
+}
+/* ---------- registro no Google Sheets / Drive ---------- */
+let TICKET='';
+async function registrar(){
+  const b = document.getElementById('btnReg'), st = document.getElementById('regState');
+  if(!CFG.endpoint){
+    st.innerHTML = 'Registro ainda não configurado (CFG.endpoint vazio). O chamado segue pelo WhatsApp normalmente.';
+    return;
+  }
+  b.disabled = true; b.textContent = 'Enviando…';
+  st.textContent = 'Enviando '+S.files.length+' arquivo(s). Não feche a tela.';
+  try{
+    const r = await fetch(CFG.endpoint, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},   // evita o preflight de CORS
+      body: JSON.stringify({
+        chamado: TICKET,
+        contato: S.contato,
+        equipamento: {modelo:S.contato.modelo, serie:S.serie.numero, horas:S.serie.horas},
+        relato: S.relato,
+        fases: S.fases,
+        pendentes: S.grandes,
+        relatorio: TXT,
+        arquivos: S.files
+      })
+    });
+    const j = await r.json();
+    if(!j.ok) throw new Error(j.erro||'falha');
+    st.innerHTML = '<b style="color:#4FD08A">Chamado '+TICKET+' registrado.</b> Uma cópia foi enviada para '+S.contato.email+'.'+
+      (S.grandes.length ? '<br>Falta enviar pelo WhatsApp: '+S.grandes.join(', ') : '');
+    b.textContent = 'Chamado registrado ✓';
+  }catch(err){
+    b.disabled = false; b.textContent = 'Tentar registrar de novo';
+    st.innerHTML = '<b style="color:#E2453C">Não deu para registrar agora.</b> Envie pelo WhatsApp nos botões abaixo — nada se perde.';
+  }
+}
+
+function copiar(){
+  navigator.clipboard.writeText(TXT).then(()=>{
+    const t=document.getElementById('toast'); t.classList.add('on');
+    setTimeout(()=>t.classList.remove('on'),1800);
+  });
+}
+pintarGauge();
+</script>
+</body>
+</html>
